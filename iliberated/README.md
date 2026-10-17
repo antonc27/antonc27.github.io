@@ -1,6 +1,6 @@
 # Fork website
 
-This is a self-contained static site for `https://ac27.github.io/iliberated/`.
+This is a self-contained static site for `https://antonc27.github.io/iliberated/`.
 It adapts the original home, free games, compatibility, and privacy pages. No
 JavaScript, package installation, compilation, or Cargo commands are needed.
 
@@ -19,8 +19,8 @@ use the requested public address. There is no custom domain or `CNAME` file.
 The visible name is `iLibirated`, as requested; the native app remains iLiberated.
 
 Source and issue links use `https://github.com/antonc27/iliberated`, the public
-project address documented in the repository's main README. Hosting this site
-under `ac27` does not change those source links. If the source repository moves,
+project address documented in the repository's main README. The website is
+hosted separately in `antonc27/antonc27.github.io`. If the source repository moves,
 update the source, issues, and license links in all four pages. Links to free
 games retain the actual upstream repositories.
 
@@ -44,27 +44,51 @@ For a project-path preview, put a copy of `site` in a temporary directory named
 
 The workflow in `.github/workflows/site-pages.yml` is **manual only**. It has no
 push or pull-request trigger. No deployment has been run as part of these changes.
+It is stored here for copying to the shared website repository; its deployment
+job runs only in **`antonc27/antonc27.github.io`**.
 
-1. Put these changes in the **`ac27/iliberated`** repository. GitHub Pages derives
-   the default hostname from the repository owner, so this owner/repository pair
-   is required for `ac27.github.io/iliberated`. Publishing from a different owner
-   produces that owner's hostname instead. The repository must have GitHub Pages
-   available on its plan; public repositories can use it on GitHub Free.
-2. Ensure `.github/workflows/site-pages.yml` exists on that repository's default
-   branch so GitHub displays its manual **Run workflow** control. The selected
-   deployment branch must also contain the workflow and the completed `site` folder.
-3. In the repository, open **Settings → Pages → Build and deployment**. Set
-   **Source** to **GitHub Actions**. Do not select “Deploy from a branch”: that
-   mode cannot directly serve `/site` (it only supports the root or `/docs`).
+1. Copy the **contents** of this repository's `site/` folder into `iliberated/`
+   in **`antonc27/antonc27.github.io`**. The home page should be
+   `iliberated/index.html`, with `iliberated/assets/` beside it. Preserve any
+   other website folders in that shared repository.
+2. Copy `.github/workflows/site-pages.yml` to the same path in the shared website
+   repository. Ensure the workflow exists on its default branch so GitHub displays
+   the manual **Run workflow** control. The selected deployment branch must also
+   contain the workflow and the completed `iliberated/` folder.
+3. In the shared repository, open **Settings → Pages → Build and deployment**.
+   Set **Source** to **GitHub Actions**. GitHub Pages must be available on the
+   repository's plan; public repositories can use it on GitHub Free.
 4. When ready to publish, open **Actions → Deploy site to GitHub Pages → Run
    workflow**. Select the branch containing the finished site and run it. If the
    `github-pages` environment has branch restrictions or required reviewers,
    allow that branch and approve the deployment when prompted.
-5. Wait for the workflow to finish. Open **`https://ac27.github.io/iliberated/`**
+5. Wait for the workflow to finish. Open **`https://antonc27.github.io/iliberated/`**
    and check navigation, images, free game links, and the support email on mobile
-   and desktop. The workflow's environment link also shows the deployed URL.
+   and desktop. The workflow's environment link points to the shared site root,
+   `https://antonc27.github.io/`.
 
-The workflow uploads only `site` and deploys it directly, without building the
-emulator or fetching submodules. For later updates, save the site changes and
-manually run the same workflow again. To preview or review without publishing,
-leave the workflow unrun.
+The shared website repository should look like this:
+
+```text
+antonc27.github.io/
+├── .github/workflows/site-pages.yml
+├── README.md
+├── iliberated/
+│   ├── index.html
+│   ├── free_games.html
+│   ├── compat.html
+│   ├── privacy.html
+│   └── assets/
+└── other-site/
+    └── index.html
+```
+
+The upload action uses **`path: .`** to publish the shared repository root. This
+preserves `iliberated/` and any sibling website folders in the deployed URLs.
+Using `path: site` fails in this layout because that folder does not exist;
+using `path: iliberated` would publish this site's contents at the root instead.
+
+The workflow deploys static files directly, without building the emulator or
+fetching submodules. For later updates, copy the updated files and workflow to
+the shared website repository, then manually run its workflow again. To preview
+or review without publishing, leave the workflow unrun.
